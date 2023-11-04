@@ -1,0 +1,30 @@
+{
+  "name": "matatirosoln/doctrine-fm-odata-driver",
+  "description": "Use FileMaker via the v19.6+ OData interface as your backend database",
+  "type": "library",
+  "authors": [
+    {
+      "name": "Steve Winter",
+      "email": "steve@msdev.co.uk"
+    }
+  ],
+  "keywords": [
+    "doctrine",
+    "dbal",
+    "FileMaker",
+    "OData"
+  ],
+  "license": [
+    "MIT"
+  ],
+  "require": {
+    "php": "8.2.*",
+    "doctrine/dbal": "^3.6",
+    "symfony/http-client": "^6.3"
+  },
+  "autoload": {
+    "psr-4": {
+      "MSDev\\DoctrineFMODataDriver\\": "src"
+    }
+  }
+}
