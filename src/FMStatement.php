@@ -6,16 +6,29 @@ namespace MSDev\DoctrineFMODataDriver;
 use Doctrine\DBAL\Driver\Result;
 use Doctrine\DBAL\Driver\Statement;
 use Doctrine\DBAL\ParameterType;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Throwable;
 
 class FMStatement implements Statement
 {
+    private readonly MySQLToOData $parser;
+
+    public function __construct(
+        private readonly HttpClientInterface $client,
+        private readonly FMQuery $query,
+    ) {
+        $this->parser = new MySQLToOData();
+    }
+
 
     /**
      * @inheritDoc
      */
-    public function bindValue($param, $value, $type = ParameterType::STRING)
+    public function bindValue($param, $value, $type = ParameterType::STRING): bool
     {
-        // TODO: Implement bindValue() method.
+        $this->query->saveParameter($param, $value);
+        dump($this->query);
+        return true;
     }
 
     /**
@@ -24,6 +37,7 @@ class FMStatement implements Statement
     public function bindParam($param, &$variable, $type = ParameterType::STRING, $length = null)
     {
         // TODO: Implement bindParam() method.
+        dd('bindParam');
     }
 
     /**
@@ -31,6 +45,19 @@ class FMStatement implements Statement
      */
     public function execute($params = null): Result
     {
-        // TODO: Implement execute() method.
+        try {
+            $this->parser->prepareQuery($this->query);
+
+            $result = $this->client->request(
+                $this->query->getMethod(),
+                $this->query->getLayout() . '?' . $this->query->getQueryString()
+            );
+            $body = json_decode($result->getContent(), true);
+            $result = $this->parser->prepareResult($body['value']);
+
+            return new FMResult($result);
+        } catch (Throwable $except) {
+            dd($except);
+        }
     }
 }

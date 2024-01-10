@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace MSDev\DoctrineFMODataDriver;
 
-use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Connection as ParentConnection;
 use Doctrine\DBAL\Driver;
 use Doctrine\DBAL\Driver\API\ExceptionConverter;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
@@ -14,42 +14,44 @@ use Symfony\Component\HttpClient\HttpClient;
 class FMDriver implements Driver
 {
 
-    /**
-     * @inheritDoc
-     */
     public function connect(
         #[SensitiveParameter] array $params
-    ) {
-        $client = HttpClient::create();
+    ): Driver\Connection
+    {
+        $client = HttpClient::createForBaseUri($this->baseURL($params), [
+            'auth_basic' => [$params['user'], $params['password']],
+            'headers' => [
+                'Accept' => 'application/json',
+                'Content-Type' => 'application/json',
+            ]
+        ]);
 
         return new FMConnection($client);
     }
 
-    /**
-     * @inheritDoc
-     */
     public function getDatabasePlatform()
     {
         // TODO: Implement getDatabasePlatform() method.
-        throw new Exception('not implemented');
+        //throw new Exception('not implemented');
+        return new FMPlatform();
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getSchemaManager(Connection $conn, AbstractPlatform $platform)
+    public function getSchemaManager(ParentConnection $conn, AbstractPlatform $platform)
     {
         // TODO: Implement getSchemaManager() method.
         throw new Exception('not implemented');
     }
 
-    /**
-     * @inheritDoc
-     */
     public function getExceptionConverter(): ExceptionConverter
     {
         // TODO: Implement getExceptionConverter() method.
         throw new Exception('not implemented');
+    }
+
+    private function baseURL(array $params): string
+    {
+        $server = str_starts_with($params['host'], 'http') ? $params['host'] : "https://{$params['host']}";
+        return (str_ends_with($server, '/') ? $server : $server . '/') . 'fmi/odata/v4/' . $params['dbname'] . '/';
     }
 
 }

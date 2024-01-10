@@ -20,7 +20,8 @@
   "require": {
     "php": "8.2.*",
     "doctrine/dbal": "^3.6",
-    "symfony/http-client": "^6.3"
+    "symfony/http-client": "^6.3",
+    "greenlion/php-sql-parser": "^4.6"
   },
   "autoload": {
     "psr-4": {

@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace MSDev\DoctrineFMODataDriver;
 
-use Doctrine\DBAL\Driver\Connection;
 use Doctrine\DBAL\Driver\Result;
+use Doctrine\DBAL\Driver\ServerInfoAwareConnection;
 use Doctrine\DBAL\Driver\Statement;
 use Doctrine\DBAL\ParameterType;
 use Exception;
@@ -14,7 +14,7 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 /**
  * @method object getNativeConnection()
  */
-class FMConnection implements Connection
+class FMConnection implements ServerInfoAwareConnection
 {
 
     public function __construct(
@@ -23,81 +23,59 @@ class FMConnection implements Connection
     }
 
 
-    /**
-     * @inheritDoc
-     */
+
     public function prepare(string $sql): Statement
     {
-        // TODO: Implement prepare() method.
-        throw new Exception('not implemented');
+        return new FMStatement($this->client, new FMQuery($sql));
     }
 
-    /**
-     * @inheritDoc
-     */
+
     public function query(string $sql): Result
     {
-        // TODO: Implement query() method.
-        throw new Exception('not implemented');
+        dd(__METHOD__);
     }
 
-    /**
-     * @inheritDoc
-     */
+
     public function quote($value, $type = ParameterType::STRING)
     {
-        // TODO: Implement quote() method.
-        throw new Exception('not implemented');
+        dd(__METHOD__);
     }
 
-    /**
-     * @inheritDoc
-     */
+
     public function exec(string $sql): int
     {
-        // TODO: Implement exec() method.
-        throw new Exception('not implemented');
+        dd(__METHOD__);
     }
 
-    /**
-     * @inheritDoc
-     */
     public function lastInsertId($name = null)
     {
-        // TODO: Implement lastInsertId() method.
-        throw new Exception('not implemented');
+        dd(__METHOD__);
     }
 
-    /**
-     * @inheritDoc
-     */
     public function beginTransaction()
     {
-        // TODO: Implement beginTransaction() method.
-        throw new Exception('not implemented');
+        dd(__METHOD__);
     }
 
-    /**
-     * @inheritDoc
-     */
     public function commit()
     {
-        // TODO: Implement commit() method.
-        throw new Exception('not implemented');
+        dd(__METHOD__);
     }
 
-    /**
-     * @inheritDoc
-     */
     public function rollBack()
     {
-        // TODO: Implement rollBack() method.
-        throw new Exception('not implemented');
+        dd(__METHOD__);
+    }
+
+    public function getServerVersion()
+    {
+        // TODO actually implement this
+        return '2023';
     }
 
     public function __call($name, $arguments)
     {
-        // TODO: Implement @method object getNativeConnection()
-        throw new Exception('not implemented');
+        dd(__METHOD__);
     }
+
 }
